@@ -1,0 +1,37 @@
+{
+  "primary": "lightgbm",
+  "models": {
+    "lightgbm": {
+      "path": "models/lightgbm.txt",
+      "type": "lightgbm",
+      "features": "selected_features"
+    },
+    "random_forest": {
+      "path": "models/rf_baseline.pkl",
+      "type": "joblib",
+      "features": "selected_features"
+    },
+    "xgboost": {
+      "path": "models/xgb_baseline.pkl",
+      "type": "joblib",
+      "features": "selected_features"
+    }
+  },
+  "metrics": {
+    "LightGBM": {
+      "MAE_MPa": 39.1499012889391,
+      "RMSE_MPa": 52.22731961452781,
+      "R2": 0.8543391417570398
+    },
+    "RandomForest": {
+      "MAE_MPa": 38.84518273415656,
+      "RMSE_MPa": 51.18185446801937,
+      "R2": 0.8601123339740179
+    },
+    "XGBoost": {
+      "MAE_MPa": 39.30321151015242,
+      "RMSE_MPa": 51.45756083802209,
+      "R2": 0.8586011812488558
+    }
+  }
+}
