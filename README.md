@@ -37,6 +37,14 @@ uvicorn api:app --host 127.0.0.1 --port 8000
 
 接口：`GET /health`、`POST /predict`、`POST /explain`、`GET /records`。网页、API 和直接 Python 调用共享 `service/predict_service.py` 与 `feature_config.json`。
 
+独立 CSV 预测（输入成分为 0–100 百分比，不做额外缩放；默认使用 LightGBM，输出文件默认为输入文件旁的 `<文件名>_predictions.csv`）：
+
+```powershell
+python src/predict.py --input outputs/sample_input.csv
+```
+
+可选参数：`--model random_forest` 或 `--model xgboost` 可指定模型；`--output outputs/my_predictions.csv` 可指定输出路径。输出包含 `predicted_yield_strength_MPa` 列。
+
 ## 输入约定
 
 需要 `Processing` 和配置中列出的 25 个元素成分字段。源数据成分是 0–1 比例，训练时乘以 100；新样本输入单位为百分比（0–100）。没有真实目标值的新样本只返回预测，不计算误差。成分超出 0–100% 或未知 Processing 状态会返回可读校验错误；成分总和偏离 100% 超过 1 个百分点时返回警告并继续预测。
@@ -70,3 +78,4 @@ uvicorn api:app --host 127.0.0.1 --port 8000
 ## 适用边界
 
 模型反映所给公开数据中的模式，用于辅助估算，不替代材料标准力学试验。数据来源、字段、单位和处理标签依据见 `evidence/数据字段说明.md`；全部指标、参数与实验范围以机器生成文件为准。
+
