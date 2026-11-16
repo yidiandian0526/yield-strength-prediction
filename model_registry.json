@@ -1,37 +1,83 @@
 {
   "primary": "lightgbm",
+  "tuning": {
+    "method": "3-fold GroupKFold on training partition",
+    "selection_metric": "mean MAE (MPa)",
+    "best_candidate": "C04",
+    "parameters": {
+      "num_leaves": 31,
+      "learning_rate": 0.035,
+      "n_estimators": 700,
+      "min_child_samples": 8,
+      "max_depth": -1,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "reg_alpha": 0.05,
+      "reg_lambda": 0.2,
+      "min_split_gain": 0.0
+    }
+  },
   "models": {
     "lightgbm": {
       "path": "models/lightgbm.txt",
       "type": "lightgbm",
-      "features": "selected_features"
+      "features": "selected_features",
+      "parameters": {
+        "num_leaves": 31,
+        "learning_rate": 0.035,
+        "n_estimators": 700,
+        "min_child_samples": 8,
+        "max_depth": -1,
+        "subsample": 0.9,
+        "colsample_bytree": 0.9,
+        "reg_alpha": 0.05,
+        "reg_lambda": 0.2,
+        "min_split_gain": 0.0
+      }
     },
     "random_forest": {
       "path": "models/rf_baseline.pkl",
       "type": "joblib",
-      "features": "selected_features"
+      "features": "selected_features",
+      "parameters": {
+        "n_estimators": 500,
+        "max_features": 0.8
+      }
     },
     "xgboost": {
       "path": "models/xgb_baseline.pkl",
       "type": "joblib",
-      "features": "selected_features"
+      "features": "selected_features",
+      "parameters": {
+        "n_estimators": 500,
+        "max_depth": 5,
+        "learning_rate": 0.04,
+        "subsample": 0.9,
+        "colsample_bytree": 0.9,
+        "objective": "reg:squarederror"
+      }
     }
   },
   "metrics": {
     "LightGBM": {
-      "MAE_MPa": 39.1499012889391,
-      "RMSE_MPa": 52.22731961452781,
-      "R2": 0.8543391417570398
+      "MAE_MPa": 35.94153031495192,
+      "RMSE_MPa": 48.44085723513941,
+      "R2": 0.8746942416780104
     },
     "RandomForest": {
-      "MAE_MPa": 38.84518273415656,
-      "RMSE_MPa": 51.18185446801937,
-      "R2": 0.8601123339740179
+      "MAE_MPa": 38.99471231715859,
+      "RMSE_MPa": 51.21845942317494,
+      "R2": 0.8599121687826778
     },
     "XGBoost": {
-      "MAE_MPa": 39.30321151015242,
-      "RMSE_MPa": 51.45756083802209,
-      "R2": 0.8586011812488558
+      "MAE_MPa": 39.63566472454834,
+      "RMSE_MPa": 51.638573627751676,
+      "R2": 0.8576046313884781
     }
+  },
+  "lightgbm_before_tuning_same_test": {
+    "MAE_MPa": 39.237661195281206,
+    "RMSE_MPa": 51.89547734800605,
+    "R2": 0.8561842630286867
   }
 }

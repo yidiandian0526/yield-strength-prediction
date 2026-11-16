@@ -1,27 +1,27 @@
 ﻿feature,gain,gain_rank,selected,kept_after_variance,kept_after_correlation
-Cu,89086957.13090038,1,True,True,True
-Processing_No Processing,36166518.11647034,2,True,True,True
-Zn,25129791.196928978,3,True,True,True
-Al,17120634.682584763,4,True,True,True
-Mg,10491638.746414185,5,True,True,True
-Zr,7935986.22183609,6,True,True,True
-Mn,7827814.839514732,7,True,True,True
-Processing_Solutionised + Artificially peak aged,7059179.066209793,8,True,True,True
-Processing_Solutionised + Artificially over aged,4401545.854157448,9,True,True,True
-Si,4153322.166701317,10,True,True,True
-Processing_Solutionised + Naturally aged,3452607.6074523926,11,True,True,True
-Li,2103456.9121055603,12,True,True,True
-Fe,1834762.9200439453,13,True,True,True
-Processing_Strain Harderned (Hard),1801810.6576747894,14,True,True,True
-Processing_Strain hardened,1622915.0292787552,15,True,True,True
-Ti,1383323.498380661,16,True,True,True
-Cr,1207477.7290449142,17,True,True,True
-Sc,1006880.4001073837,18,True,True,True
-Processing_Solutionised + Cold Worked + Naturally aged,744840.2731266022,19,True,True,True
-Ni,168994.25874710083,20,True,True,True
-Processing_Artificial aged,43111.4672460556,21,True,True,True
-B,14436.372802734375,22,True,True,True
-V,3711.2653007507324,23,False,True,True
+Cu,80563288.85289955,1,True,True,True
+Processing_No Processing,32989111.766189575,2,True,True,True
+Zn,24366986.94576645,3,True,True,True
+Al,14390373.350933075,4,True,True,True
+Mg,10676699.085020065,5,True,True,True
+Mn,7652516.04853344,6,True,True,True
+Processing_Solutionised + Artificially peak aged,7277469.460777283,7,True,True,True
+Zr,6215681.933692932,8,True,True,True
+Processing_Solutionised + Artificially over aged,4810513.026437759,9,True,True,True
+Si,4267896.285283089,10,True,True,True
+Li,2911044.196308136,11,True,True,True
+Fe,2589236.644188881,12,True,True,True
+Processing_Solutionised + Naturally aged,2487787.231874466,13,True,True,True
+Processing_Strain hardened,1684040.2006912231,14,True,True,True
+Cr,1474126.1343345642,15,True,True,True
+Ti,1233188.4248523712,16,True,True,True
+Processing_Strain hardened (Hard),1118573.2227630615,17,True,True,True
+Sc,977063.8850040436,18,True,True,True
+Processing_Solutionised + Cold Worked + Naturally aged,748773.5146217346,19,True,True,True
+Ni,275296.01534080505,20,True,True,True
+Processing_Artificial aged,67956.39004516602,21,True,True,True
+B,46459.58604431152,22,True,True,True
+V,10611.069282531738,23,False,True,True
 Ag,0.0,24,False,True,True
 Be,0.0,25,False,True,True
 Er,0.0,26,False,True,True

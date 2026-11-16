@@ -1,9 +1,12 @@
 [theme]
+# Shared semantic palette is defined in theme.py.
 primaryColor = "#E8A317"
 backgroundColor = "#FFFDF7"
 secondaryBackgroundColor = "#FFF4D6"
 textColor = "#2C2C2A"
 font = "sans serif"
+# Model colors: LightGBM #E8A317, RandomForest #7F77DD, XGBoost #1D9E75.
+# Neutral border/grid color: #E6E1D6.
 
 [server]
 headless = true

@@ -22,6 +22,8 @@ secrets.json
 records.db
 *.db-journal
 *.log
+!training_run.log
+!training_run_fix.log
 work_mplconfig/
 artifacts/screenshots/
 artifacts/screenshots/edge_*/

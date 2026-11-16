@@ -32,6 +32,7 @@
   "field_unit": "%",
   "source_composition_encoding": "0-1 proportion",
   "source_to_model_scale_factor": 100.0,
+  "service_input_scale_factor": 1.0,
   "model_input_unit": "%",
   "all_model_features": [
     "Ag",
@@ -67,8 +68,8 @@
     "Processing_Solutionised + Artificially peak aged",
     "Processing_Solutionised + Cold Worked + Naturally aged",
     "Processing_Solutionised + Naturally aged",
-    "Processing_Strain Harderned (Hard)",
-    "Processing_Strain hardened"
+    "Processing_Strain hardened",
+    "Processing_Strain hardened (Hard)"
   ],
   "selected_features": [
     "Cu",
@@ -76,18 +77,18 @@
     "Zn",
     "Al",
     "Mg",
-    "Zr",
     "Mn",
     "Processing_Solutionised + Artificially peak aged",
+    "Zr",
     "Processing_Solutionised + Artificially over aged",
     "Si",
-    "Processing_Solutionised + Naturally aged",
     "Li",
     "Fe",
-    "Processing_Strain Harderned (Hard)",
+    "Processing_Solutionised + Naturally aged",
     "Processing_Strain hardened",
-    "Ti",
     "Cr",
+    "Ti",
+    "Processing_Strain hardened (Hard)",
     "Sc",
     "Processing_Solutionised + Cold Worked + Naturally aged",
     "Ni",
@@ -103,9 +104,14 @@
     "Solutionised + Artificially peak aged",
     "Solutionised + Cold Worked + Naturally aged",
     "Solutionised + Naturally aged",
-    "Strain Harderned (Hard)",
-    "Strain hardened"
+    "Strain hardened",
+    "Strain hardened (Hard)"
   ],
+  "processing_aliases": {
+    "strain harderned (hard)": "Strain hardened (Hard)",
+    "strain hardened (hard)": "Strain hardened (Hard)",
+    "strain hardened": "Strain hardened"
+  },
   "excluded_fields": [
     "Elongation (%)",
     "Tensile Strength (MPa)",

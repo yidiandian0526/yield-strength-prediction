@@ -67,5 +67,38 @@
   "duplicate_rows_removed": 181,
   "rows_removed_for_missing_or_invalid_required_fields": 98,
   "dropped_row_index_column": "Unnamed: 0",
-  "rows_after_cleaning": 875
+  "rows_after_cleaning": 875,
+  "source_sha256": "a3dd4f5091e485cf4db90308babcad38831174ddafbb6ae03df4ca3d4a647906",
+  "processing_audit": {
+    "raw_value_counts": {
+      "Solutionised  + Artificially peak aged": 375,
+      "Solutionised + Artificially over aged": 214,
+      "Strain Harderned (Hard)": 197,
+      "No Processing": 141,
+      "Solutionised + Naturally aged": 86,
+      "Solutionised + Cold Worked + Naturally aged": 57,
+      "Strain hardened": 41,
+      "Artificial aged": 21,
+      "Naturally aged": 18,
+      "Solutionised": 4
+    },
+    "normalized_value_counts": {
+      "Solutionised + Artificially peak aged": 375,
+      "Solutionised + Artificially over aged": 214,
+      "Strain hardened (Hard)": 197,
+      "No Processing": 141,
+      "Solutionised + Naturally aged": 86,
+      "Solutionised + Cold Worked + Naturally aged": 57,
+      "Strain hardened": 41,
+      "Artificial aged": 21,
+      "Naturally aged": 18,
+      "Solutionised": 4
+    },
+    "decision": "Strain Harderned (Hard) 与 Strain hardened 保留为两个工艺状态；只将 Harderned 拼写纠正为 hardened，并与同一括号限定的大小写变体归一。依据：原始标签并列存在且来源研究将其作为独立处理类别。",
+    "aliases": {
+      "strain harderned (hard)": "Strain hardened (Hard)",
+      "strain hardened (hard)": "Strain hardened (Hard)",
+      "strain hardened": "Strain hardened"
+    }
+  }
 }

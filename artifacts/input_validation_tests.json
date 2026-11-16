@@ -1,0 +1,34 @@
+{
+  "sample_prediction_reference_MPa": 580.7903884267786,
+  "sample_prediction_after_validation_MPa": 580.7903884267786,
+  "sample_prediction_unchanged": true,
+  "out_of_range": {
+    "status": "passed",
+    "message": "元素成分必须在 0–100% 范围内；超范围字段：Ag=100.001"
+  },
+  "off_sum_warning": {
+    "status": "passed",
+    "warnings": [
+      "第 1 行元素成分合计为 95.000%，与 100% 相差超过 1 个百分点；预测已继续，请核对输入。"
+    ],
+    "prediction_MPa": 604.8372082296318
+  },
+  "unknown_processing": {
+    "status": "passed",
+    "message": "未知 Processing 值：'Unknown processing test value'。允许值：Artificial aged、Naturally aged、No Processing、Solutionised、Solutionised + Artificially over aged、Solutionised + Artificially peak aged、Solutionised + Cold Worked + Naturally aged、Solutionised + Naturally aged、Strain hardened、Strain hardened (Hard)",
+    "allowed_values": [
+      "Artificial aged",
+      "Naturally aged",
+      "No Processing",
+      "Solutionised",
+      "Solutionised + Artificially over aged",
+      "Solutionised + Artificially peak aged",
+      "Solutionised + Cold Worked + Naturally aged",
+      "Solutionised + Naturally aged",
+      "Strain hardened",
+      "Strain hardened (Hard)"
+    ]
+  },
+  "streamlit_max_value_100": "passed",
+  "example_fill_button": "passed; 25 values match outputs/sample_input.csv row 1"
+}

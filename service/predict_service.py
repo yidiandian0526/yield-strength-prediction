@@ -22,7 +22,9 @@ def _normalize_processing(value: Any) -> str:
     import re
     text = "" if pd.isna(value) else str(value)
     text = re.sub(r"\s+", " ", text.strip())
-    return re.sub(r"\s*\+\s*", " + ", text)
+    text = re.sub(r"\s*\+\s*", " + ", text)
+    aliases = load_config().get("processing_aliases", {})
+    return aliases.get(text.casefold(), text)
 
 
 def load_config() -> dict[str, Any]:
@@ -41,12 +43,52 @@ def _feature_frame(record_or_df: dict[str, Any] | pd.DataFrame) -> pd.DataFrame:
         raw[name] = pd.to_numeric(raw[name], errors="coerce")
     if raw[required].isna().any().any():
         raise ValueError("输入字段包含空值或非数值成分")
-    scale = float(cfg.get("source_to_model_scale_factor", 1.0))
-    for name in cfg["numeric_features"]:
-        raw[name] = raw[name] * scale
+    numeric = raw[cfg["numeric_features"]]
+    out_of_range = (numeric.lt(0.0) | numeric.gt(100.0))
+    if out_of_range.any().any():
+        details = [
+            f"{column}={value:g}"
+            for column in numeric.columns
+            for value in numeric.loc[out_of_range[column], column].head(5)
+        ]
+        raise ValueError("元素成分必须在 0–100% 范围内；超范围字段：" + ", ".join(details))
+
+    processing_field = cfg["processing_field"]
+    allowed = cfg["processing_values"]
+    unknown = sorted({value for value in raw[processing_field].astype(str) if value not in allowed})
+    if unknown:
+        raise ValueError(
+            "未知 Processing 值："
+            + ", ".join(repr(value) for value in unknown)
+            + "。允许值："
+            + "、".join(allowed)
+        )
+
+    composition_sum = numeric.sum(axis=1)
+    warnings = []
+    for row_position, total in enumerate(composition_sum, start=1):
+        if abs(float(total) - 100.0) > 1.0:
+            warnings.append(
+                f"第 {row_position} 行元素成分合计为 {total:.3f}%，与 100% 相差超过 1 个百分点；预测已继续，请核对输入。"
+            )
+    # Service inputs are already model-space percentages (0–100).  The
+    # source CSV conversion from proportions happens only in train.py;
+    # applying that factor here would scale user input a second time.
+    scale = float(cfg.get("service_input_scale_factor", 1.0))
+    if scale != 1.0:
+        raise ValueError("service_input_scale_factor 必须为 1.0；服务层输入应为模型百分比")
     matrix = pd.get_dummies(raw[required], columns=[cfg["processing_field"]], dtype=float)
+    unexpected_columns = [name for name in matrix.columns if name not in cfg["all_model_features"]]
+    if unexpected_columns:
+        raise ValueError(
+            "输入生成了模型未见过的特征："
+            + ", ".join(unexpected_columns)
+            + "。请核对 Processing 是否为允许的枚举值。"
+        )
     matrix = matrix.reindex(columns=cfg["all_model_features"], fill_value=0.0)
-    return matrix[cfg["selected_features"]].astype(float)
+    matrix = matrix[cfg["selected_features"]].astype(float)
+    matrix.attrs["input_warnings"] = warnings
+    return matrix
 
 
 def _load_model(name: str = "lightgbm"):
@@ -68,6 +110,7 @@ def predict_dataframe(data: pd.DataFrame, model_name: str = "lightgbm") -> pd.Da
     model = _load_model(model_name)
     result = data.copy()
     result["predicted_yield_strength_MPa"] = np.asarray(model.predict(features), dtype=float)
+    result.attrs["input_warnings"] = features.attrs.get("input_warnings", [])
     return result
 
 
@@ -79,6 +122,7 @@ def predict_record(record: dict[str, Any], model_name: str = "lightgbm", save: b
         "predicted_yield_strength_MPa": prediction,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "input": {key: value for key, value in record.items()},
+        "warnings": result_df.attrs.get("input_warnings", []),
     }
     if save:
         save_record(result)
@@ -98,6 +142,7 @@ def explain_record(record: dict[str, Any]) -> dict[str, Any]:
     return {
         "base_value_MPa": prediction - float(contributions.sum()),
         "prediction_MPa": prediction,
+        "warnings": features.attrs.get("input_warnings", []),
         "contributions": [
             {"feature": name, "shap_value_MPa": float(value)}
             for name, value in sorted(zip(features.columns, contributions), key=lambda pair: abs(pair[1]), reverse=True)

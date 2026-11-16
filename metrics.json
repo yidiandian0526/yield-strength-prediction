@@ -1,34 +1,42 @@
 {
   "seed": 2024,
+  "split": "GroupShuffleSplit(train_size=0.8) by exact composition combination",
   "source": "Mendeley Data V1 DOI 10.17632/b6br4yk6r3.1",
   "data_file": "data/al_data.csv",
   "source_sha256": "a3dd4f5091e485cf4db90308babcad38831174ddafbb6ae03df4ca3d4a647906",
   "source_rows": 1154,
-  "dropped_missing_target_rows": 98,
+  "exact_duplicate_rows_removed": 181,
+  "rows_removed_for_missing_or_invalid_required_fields": 98,
+  "source_target_missing_rows_before_dedup": 109,
+  "cleaning_formula": "1154 - 181 - 98 = 875",
+  "rows_removed_for_missing_or_invalid_required_fields_note": "98 is the post-deduplication count of rows with any required field missing or invalid; it is not the count of missing-target rows.",
   "total_samples": 875,
   "train_samples": 709,
   "test_samples": 166,
   "unique_composition_groups": 341,
   "train_groups": 272,
   "test_groups": 69,
+  "train_test_group_intersection_count": 0,
+  "unseen_test_processing_values": [],
+  "test_processing_values_reindexed_to_zero": [],
   "target": "Yield Strength (MPa)",
   "target_unit": "MPa",
   "plot_font": "Noto Sans SC",
   "models": {
     "LightGBM": {
-      "MAE_MPa": 39.1499012889391,
-      "RMSE_MPa": 52.22731961452781,
-      "R2": 0.8543391417570398
+      "MAE_MPa": 35.94153031495192,
+      "RMSE_MPa": 48.44085723513941,
+      "R2": 0.8746942416780104
     },
     "RandomForest": {
-      "MAE_MPa": 38.84518273415656,
-      "RMSE_MPa": 51.18185446801937,
-      "R2": 0.8601123339740179
+      "MAE_MPa": 38.99471231715859,
+      "RMSE_MPa": 51.21845942317494,
+      "R2": 0.8599121687826778
     },
     "XGBoost": {
-      "MAE_MPa": 39.30321151015242,
-      "RMSE_MPa": 51.45756083802209,
-      "R2": 0.8586011812488558
+      "MAE_MPa": 39.63566472454834,
+      "RMSE_MPa": 51.638573627751676,
+      "R2": 0.8576046313884781
     }
   },
   "feature_selection": {
@@ -38,24 +46,159 @@
     "selected_feature_count": 22,
     "variance_threshold": 1e-12,
     "correlation_threshold": 0.98,
-    "selection_rule": "LightGBM gain descending; retain top 65%, minimum 8"
+    "selection_rule": "LightGBM gain descending; retain top 65%, minimum 8",
+    "training_only": true,
+    "selected_features": [
+      "Cu",
+      "Processing_No Processing",
+      "Zn",
+      "Al",
+      "Mg",
+      "Mn",
+      "Processing_Solutionised + Artificially peak aged",
+      "Zr",
+      "Processing_Solutionised + Artificially over aged",
+      "Si",
+      "Li",
+      "Fe",
+      "Processing_Solutionised + Naturally aged",
+      "Processing_Strain hardened",
+      "Cr",
+      "Ti",
+      "Processing_Strain hardened (Hard)",
+      "Sc",
+      "Processing_Solutionised + Cold Worked + Naturally aged",
+      "Ni",
+      "Processing_Artificial aged",
+      "B"
+    ]
   },
   "selection_comparison": [
     {
       "stage": "选择前",
       "feature_count": 35,
-      "MAE_MPa": 39.65465045954623,
-      "RMSE_MPa": 51.9924229072599,
-      "R2": 0.855646438905484
+      "MAE_MPa": 37.09322589604442,
+      "RMSE_MPa": 49.62177698163883,
+      "R2": 0.868510215363006
     },
     {
       "stage": "选择后",
       "feature_count": 22,
-      "MAE_MPa": 39.1499012889391,
-      "RMSE_MPa": 52.22731961452781,
-      "R2": 0.8543391417570398
+      "MAE_MPa": 35.94153031495192,
+      "RMSE_MPa": 48.44085723513941,
+      "R2": 0.8746942416780104
     }
   ],
+  "lightgbm_before_tuning_same_test": {
+    "MAE_MPa": 39.237661195281206,
+    "RMSE_MPa": 51.89547734800605,
+    "R2": 0.8561842630286867
+  },
+  "lightgbm_after_tuning_same_test": {
+    "MAE_MPa": 35.94153031495192,
+    "RMSE_MPa": 48.44085723513941,
+    "R2": 0.8746942416780104
+  },
+  "tuning": {
+    "candidate_count": 11,
+    "folds_per_candidate": 3,
+    "best_candidate": "C04",
+    "parameters": {
+      "num_leaves": 31,
+      "learning_rate": 0.035,
+      "n_estimators": 700,
+      "min_child_samples": 8,
+      "max_depth": -1,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "reg_alpha": 0.05,
+      "reg_lambda": 0.2,
+      "min_split_gain": 0.0
+    }
+  },
+  "stability_seeds": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2025
+  ],
+  "stability": {
+    "LightGBM": {
+      "MAE_MPa": {
+        "mean": 37.96001054024238,
+        "std": 3.4467391974682973
+      },
+      "RMSE_MPa": {
+        "mean": 51.24102589340835,
+        "std": 4.43113777665205
+      },
+      "R2": {
+        "mean": 0.882974970389545,
+        "std": 0.029731341732000316
+      }
+    },
+    "RandomForest": {
+      "MAE_MPa": {
+        "mean": 39.57851274954782,
+        "std": 3.9440530439471275
+      },
+      "RMSE_MPa": {
+        "mean": 53.87307723482028,
+        "std": 5.452694801933501
+      },
+      "R2": {
+        "mean": 0.870311596827562,
+        "std": 0.036572741535616966
+      }
+    },
+    "XGBoost": {
+      "MAE_MPa": {
+        "mean": 39.010978318813116,
+        "std": 3.072906549133321
+      },
+      "RMSE_MPa": {
+        "mean": 51.631319188763726,
+        "std": 3.336618129603507
+      },
+      "R2": {
+        "mean": 0.8819586237146041,
+        "std": 0.023585755263891242
+      }
+    }
+  },
+  "processing_audit": {
+    "raw_value_counts": {
+      "Solutionised  + Artificially peak aged": 375,
+      "Solutionised + Artificially over aged": 214,
+      "Strain Harderned (Hard)": 197,
+      "No Processing": 141,
+      "Solutionised + Naturally aged": 86,
+      "Solutionised + Cold Worked + Naturally aged": 57,
+      "Strain hardened": 41,
+      "Artificial aged": 21,
+      "Naturally aged": 18,
+      "Solutionised": 4
+    },
+    "normalized_value_counts": {
+      "Solutionised + Artificially peak aged": 375,
+      "Solutionised + Artificially over aged": 214,
+      "Strain hardened (Hard)": 197,
+      "No Processing": 141,
+      "Solutionised + Naturally aged": 86,
+      "Solutionised + Cold Worked + Naturally aged": 57,
+      "Strain hardened": 41,
+      "Artificial aged": 21,
+      "Naturally aged": 18,
+      "Solutionised": 4
+    },
+    "decision": "Strain Harderned (Hard) 与 Strain hardened 保留为两个工艺状态；只将 Harderned 拼写纠正为 hardened，并与同一括号限定的大小写变体归一。依据：原始标签并列存在且来源研究将其作为独立处理类别。",
+    "aliases": {
+      "strain harderned (hard)": "Strain hardened (Hard)",
+      "strain hardened (hard)": "Strain hardened (Hard)",
+      "strain hardened": "Strain hardened"
+    }
+  },
   "figures": [
     "artifacts\\figures\\01_actual_vs_pred.png",
     "artifacts\\figures\\02_error_distribution.png",
@@ -63,6 +206,7 @@
     "artifacts\\figures\\04_feature_selection_comparison.png",
     "artifacts\\figures\\05_shap_global.png",
     "artifacts\\figures\\06_grouped_error.png",
-    "artifacts\\figures\\07_model_comparison.png"
+    "artifacts\\figures\\07_model_comparison.png",
+    "artifacts\\figures\\08_stability.png"
   ]
 }

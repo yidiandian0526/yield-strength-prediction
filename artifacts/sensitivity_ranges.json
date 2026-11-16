@@ -1,0 +1,161 @@
+{
+  "source": "data/al_data.csv",
+  "cleaning": "drop index, normalize Processing, drop exact duplicates and invalid required rows, multiply source proportions by 100",
+  "cleaned_rows": 875,
+  "numeric_features": [
+    "Ag",
+    "Al",
+    "B",
+    "Be",
+    "Bi",
+    "Cd",
+    "Co",
+    "Cr",
+    "Cu",
+    "Er",
+    "Eu",
+    "Fe",
+    "Ga",
+    "Li",
+    "Mg",
+    "Mn",
+    "Ni",
+    "Pb",
+    "Sc",
+    "Si",
+    "Sn",
+    "Ti",
+    "V",
+    "Zn",
+    "Zr"
+  ],
+  "split": "GroupShuffleSplit(train_size=0.8, random_state=2024) by exact composition combination",
+  "training_rows": 709,
+  "ranges": {
+    "Ag": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Al": {
+      "q05_percent": 87.62,
+      "q95_percent": 99.55091282000001,
+      "unit": "%"
+    },
+    "B": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Be": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Bi": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Cd": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Co": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Cr": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.25,
+      "unit": "%"
+    },
+    "Cu": {
+      "q05_percent": 0.0,
+      "q95_percent": 4.5,
+      "unit": "%"
+    },
+    "Er": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Eu": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Fe": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.5,
+      "unit": "%"
+    },
+    "Ga": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Li": {
+      "q05_percent": 0.0,
+      "q95_percent": 1.6600000000000024,
+      "unit": "%"
+    },
+    "Mg": {
+      "q05_percent": 0.0,
+      "q95_percent": 4.45,
+      "unit": "%"
+    },
+    "Mn": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.883434360000001,
+      "unit": "%"
+    },
+    "Ni": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0024000000000000913,
+      "unit": "%"
+    },
+    "Pb": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Sc": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.2720000000000016,
+      "unit": "%"
+    },
+    "Si": {
+      "q05_percent": 0.0,
+      "q95_percent": 1.5,
+      "unit": "%"
+    },
+    "Sn": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Ti": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.11,
+      "unit": "%"
+    },
+    "V": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.0,
+      "unit": "%"
+    },
+    "Zn": {
+      "q05_percent": 0.0,
+      "q95_percent": 6.8960000000000035,
+      "unit": "%"
+    },
+    "Zr": {
+      "q05_percent": 0.0,
+      "q95_percent": 0.13,
+      "unit": "%"
+    }
+  }
+}

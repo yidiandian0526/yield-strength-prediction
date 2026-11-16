@@ -1,0 +1,213 @@
+{
+  "compensation_scan": {
+    "elements_tested": 24,
+    "all_elements_passed": true,
+    "details": {
+      "Ag": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "B": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Be": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Bi": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Cd": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Co": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Cr": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Cu": {
+        "points": 41,
+        "min_total_percent": 100.0,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Er": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Eu": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Fe": {
+        "points": 41,
+        "min_total_percent": 100.0,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Ga": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Li": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Mg": {
+        "points": 41,
+        "min_total_percent": 100.0,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Mn": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Ni": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Pb": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Sc": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Si": {
+        "points": 41,
+        "min_total_percent": 100.0,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Sn": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Ti": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "V": {
+        "points": 41,
+        "min_total_percent": 100.00000000000003,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Zn": {
+        "points": 41,
+        "min_total_percent": 100.00000000000001,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      },
+      "Zr": {
+        "points": 41,
+        "min_total_percent": 100.0,
+        "max_total_percent": 100.00000000000003,
+        "all_totals_equal_100": true,
+        "warnings": []
+      }
+    }
+  },
+  "sample_prediction_MPa": 580.7903884267786,
+  "comparison_matches_single_prediction": true,
+  "comparison_csv_openable": true,
+  "comparison_markdown_openable": true,
+  "streamlit_page_count": 8,
+  "streamlit_pages": [
+    "数据管理",
+    "模型与评价",
+    "单条预测",
+    "批量预测",
+    "模型解释",
+    "预测记录",
+    "配方对比",
+    "关于与说明"
+  ],
+  "zero_range_sensitivity_element": "Ag",
+  "zero_range_sensitivity_rendered": true,
+  "comparison_page_matches_single_prediction": true,
+  "comparison_download_controls": [
+    "下载配方报告 Markdown",
+    "导出对比 CSV"
+  ],
+  "extrapolation_annotation": true,
+  "no_generated_explanation_card": true,
+  "theme_constants_match_config": true,
+  "screenshot_file_count": 7,
+  "screenshot_git_status": "",
+  "screenshot_hashes": {
+    "artifacts\\screenshots\\01_数据管理.png": "839faf217108dd5d6cb8c11d1d517d67101942b48c8c2e27ac0fbefec7d3218a",
+    "artifacts\\screenshots\\02_模型与评价.png": "aa8cef9d2bc8b16f182bb7ec88fef338ee9f370aaa14f1ad240d4c6dfa08f817",
+    "artifacts\\screenshots\\03_单条预测.png": "eb2f330db0c66c9358ee899971c9a0f8855abc3c1ea5c52221ea500b6ebfedd3",
+    "artifacts\\screenshots\\04_批量预测.png": "4fb62c4ceeba41aa1230038f2847b5a34b4561bb5a3feacd38fab138ed1586e4",
+    "artifacts\\screenshots\\05_模型解释.png": "3ab0e50557de4c51251790224dcf8f0aca82d8628cd972689df96d852136681a",
+    "artifacts\\screenshots\\06_预测记录.png": "b6c9397bc13fa5fb1aaf242c35ba98515899bb5649d7f4221e843469d41338b8",
+    "artifacts\\screenshots\\07_关于与说明.png": "4fb62c4ceeba41aa1230038f2847b5a34b4561bb5a3feacd38fab138ed1586e4"
+  },
+  "forbidden_term_hits": []
+}

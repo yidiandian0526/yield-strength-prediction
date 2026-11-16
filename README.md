@@ -1,20 +1,31 @@
 # 铝合金屈服强度预测系统
 
-本项目使用 Mendeley Data V1 的 `al_data.csv` 预测铝合金屈服强度（MPa），提供已训练的 LightGBM 主模型、随机森林与 XGBoost 基线模型，以及 Streamlit 界面、纯 Python 预测服务和 FastAPI 接口。训练与测试按化学成分组合分组，固定随机种子 2024；测试集不参与训练或特征筛选。
+本项目只使用 Mendeley Data V1 `al_data.csv`（DOI `10.17632/b6br4yk6r3.1`）预测屈服强度，目标单位 MPa。提供已训练的 LightGBM 主模型、随机森林和 XGBoost 对照模型，以及 Streamlit 八页界面、纯 Python 预测服务和 FastAPI 接口。交付模型可直接加载，无需用户先训练。
 
-## 环境与启动
+## 数据来源与许可
 
-建议使用 Python 3.10–3.12。安装依赖：
+数据集名称：Aluminium alloy dataset for supervised learning；作者：N. Bhat、A. S. Barnard、N. Birbilis；版本：Mendeley Data V1；DOI：`10.17632/b6br4yk6r3.1`；许可：CC BY 4.0。请按署名许可要求注明作者、数据集名称、版本和 DOI。数据集记录的测试条件不必然符合 GB/T 228.1—2021；本项目未验证其与该标准的符合性。
+
+## 当前实测结果
+
+原始 1154 行；清洗过程为 1154 − 181 − 98 = 875 条。98 是去重后任一必需字段缺失/无效的行数；原始目标缺失 109 行为去重前统计。固定 seed 2024 按成分组合分组切分为训练 709 条、测试 166 条；训练/测试成分组交集为 0。特征筛选从 35 个 one-hot/成分输入列缩减到 22 个。
+
+| 模型 | MAE (MPa) | RMSE (MPa) | R² |
+| --- | ---: | ---: | ---: |
+| LightGBM | 35.941530 | 48.440857 | 0.874694 |
+| RandomForest | 38.994712 | 51.218459 | 0.859912 |
+| XGBoost | 39.635665 | 51.638574 | 0.857605 |
+
+输入特征与 Processing 标签映射由 `feature_config.json` 维护；最终 LightGBM 参数通过训练划分内 3 折分组交叉验证进行单变量轮换的 11 候选局部搜索，按平均 MAE 选择。本次最终仅 `min_child_samples` 从 12 改为 8，其余参数保持基准配置。稳定性结果另以 5 个种子报告，不能替代独立外部验证。
+
+## 安装与启动
+
+需要 Python 3.10–3.12。
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
-```
-
-交付包已包含训练后的模型。启动网页：
-
-```powershell
 streamlit run app.py
 ```
 
@@ -24,37 +35,38 @@ streamlit run app.py
 uvicorn api:app --host 127.0.0.1 --port 8000
 ```
 
-接口包括 `GET /health`、`POST /predict`、`POST /explain`、`GET /records`。预测请求使用字段 `Processing` 和训练配置中记录的全部元素成分字段；成分按百分比（0–100）填写。源 CSV 的成分值以 0–1 比例记录，训练预处理乘以 100；新样本通过网页、服务或 API 输入百分比值。无真实标签的新样本只生成预测值，不计算误差。API 文档位于 `/docs`。
+接口：`GET /health`、`POST /predict`、`POST /explain`、`GET /records`。网页、API 和直接 Python 调用共享 `service/predict_service.py` 与 `feature_config.json`。
+
+## 输入约定
+
+需要 `Processing` 和配置中列出的 25 个元素成分字段。源数据成分是 0–1 比例，训练时乘以 100；新样本输入单位为百分比（0–100）。没有真实目标值的新样本只返回预测，不计算误差。成分超出 0–100% 或未知 Processing 状态会返回可读校验错误；成分总和偏离 100% 超过 1 个百分点时返回警告并继续预测。
+
+## 文件
+
+- `data/al_data.csv`：唯一数据源。
+- `models/`：已训练 LightGBM 文本模型、joblib 主模型副本和两项基线模型。
+- `metrics.json`、`feature_config.json`、`model_registry.json`：真实指标、输入配置、模型和参数注册。
+- `selection_report.csv`、`feature_selection_details.csv`：选择前后指标和训练集 gain 排序详情。
+- `artifacts/test_predictions.csv`、`shap_summary.csv`：留出测试预测与 SHAP 全局贡献。
+- `artifacts/figures/`：8 张正式训练分析图，含 5 种随机分组划分稳定性图；`09_threshold_sensitivity.png` 是独立附加实验图。
+- `artifacts/screenshots/`：当前截图保留在目录中；正式八页截图待用户后续补充，本轮不验收截图。
+- `artifacts/sensitivity_ranges.json`：按正式 seed 2024 训练划分计算的各元素 5%–95% 扫描区间。
+- `artifacts/showcase_tests.json`：补偿扫描、配方导出、外推标注和展示层一致性实测。
+- `artifacts/input_validation_tests.json`、`artifacts/prediction_unit_regression.json`：输入范围/工艺校验和网页、服务、API 单位一致性实测。
+- `evidence/特征选择阈值敏感性.csv`、`artifacts/figures/09_threshold_sensitivity.png`：50%/65%/80% gain 保留比例附加实验。
+- `outputs/`：百分比单位输入样例、真实预测演示结果及记录导出样例；不导出本机既有预测记录。
+- `evidence/`：公平性审查、调参记录、稳定性数据、字段说明、测试记录、运行说明、参考文献与交接材料。
+- `environment_lock.txt`：由当前 `.venv` 导出的精确依赖版本。
+- `records.db`：SQLite 本地预测记录，网页/API 保存记录时使用。
+
+## 页面功能
+
+八页为：数据管理、模型与评价、单条预测、批量预测、模型解释、预测记录、配方对比、关于与说明。单条预测页提供典型样例填充、补偿式敏感性曲线和加入对比；配方对比页最多保存三组已计算配方，并提供 CSV 与 Markdown 导出。
 
 ## 重新训练
 
-原始数据只取自 `data/al_data.csv`。执行：
+在项目根目录执行 `python src/train.py`。主模型调参仅使用固定主训练划分内的分组交叉验证，留出测试集不参与特征选择和选参；同一运行会重建模型、指标、SHAP、特征选择对照、图和稳定性实验。`python src/refresh_delivery.py` 可在模型已训练后重建演示 CSV 和证据摘要。
 
-```powershell
-python src/train.py
-```
+## 适用边界
 
-脚本会重建指标、模型、特征配置、选择报告、SHAP 汇总、测试预测及七张图。处理枚举先做空白归一化；剔除行索引、伸长率、抗拉强度及类别标签。成分组合分组切分为约 8:2，近零方差过滤后按相关系数 0.98 去冗余，再用 LightGBM gain 选择特征。三个模型在同一训练/测试索引和同一 MAE、RMSE、R² 指标下评价。
-
-## 文件说明
-
-- `models/`：已训练 LightGBM 文本模型与三模型加载文件。
-- `feature_config.json`、`metrics.json`、`model_registry.json`：模型输入约定、真实指标和注册信息。
-- `selection_report.csv`：特征选择前后指标；`feature_selection_details.csv`：候选字段 gain 排序和筛选阶段。
-- `shap_summary.csv`：测试集全局 SHAP 汇总；网页可生成单条局部解释。
-- `artifacts/figures/`：训练真实生成的七张图。网页截图保留在本地交付目录，不上传到仓库。
-- `records.db`：网页或 API 首次写记录时在项目目录创建的 SQLite 数据库。
-- `evidence/`：测试记录、运行说明、文献列表与引用位置覆盖表、模块映射、演示脚本、材料清单。
-
-## 适用范围
-
-模型仅反映所给公开数据中的模式。输入字段、单位和工艺枚举必须符合模型配置；预测值用于辅助估算，不替代材料标准试验。陌生的 Processing 类别会映射到训练时已有的类别列空间，不会凭空建立新的工艺语义。
-
-## Streamlit Community Cloud 部署
-
-1. 将本项目推送到 GitHub 的 `main` 分支。
-2. 打开 `https://share.streamlit.io`，使用 GitHub 登录。
-3. 选择仓库，Branch 填 `main`，Main file path 填 `app.py`，点击 Deploy。
-4. 本项目当前不需要 Secrets；`.streamlit/secrets.toml` 已加入忽略规则，示例文件为 `.streamlit/secrets.toml.example`。如果未来代码新增 `st.secrets` 配置，在 Streamlit Cloud 的 **Settings → Secrets** 中粘贴对应 TOML 内容，不要把真实密钥提交到 GitHub。
-
-Cloud 运行时的 `records.db` 是实例本地文件，重启或重新部署后可能被重置；模型文件和公开数据随仓库部署。
+模型反映所给公开数据中的模式，用于辅助估算，不替代材料标准力学试验。数据来源、字段、单位和处理标签依据见 `evidence/数据字段说明.md`；全部指标、参数与实验范围以机器生成文件为准。
