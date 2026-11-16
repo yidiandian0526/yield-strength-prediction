@@ -224,7 +224,7 @@ def make_system_test_record() -> None:
         "",
         f"当前特征选择：{m['feature_selection']['initial_feature_count']} → {m['feature_selection']['selected_feature_count']} 项；调参和稳定性结果以 `metrics.json`、`artifacts/tuning_cv_folds.csv`、`evidence/主模型调参记录.md` 及 `evidence/分组划分稳定性对比.csv` 为准。",
         "",
-        "Streamlit AppTest 输出 Matplotlib 字体缓存写入权限警告及 `use_container_width` 弃用提示；测试页面均无应用异常，模型和图像文件可读。",
+        "Streamlit AppTest 页面均无应用异常，模型和图像文件可读；只读运行环境可能出现 Matplotlib 字体缓存写入权限提示。",
         "",
         "本轮新样本校验与附加实验的机器生成明细见 `artifacts/input_validation_tests.json`、`evidence/特征选择阈值敏感性.csv` 和 `evidence/特征选择阈值敏感性说明.md`。",
         "",

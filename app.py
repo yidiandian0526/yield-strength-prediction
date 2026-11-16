@@ -19,6 +19,7 @@ from service.predict_service import (  # noqa: E402
     explain_record,
     list_records,
     load_config,
+    load_model,
     predict_dataframe,
     predict_record,
 )
@@ -47,13 +48,28 @@ REGISTRY = json.loads((ROOT / "model_registry.json").read_text(encoding="utf-8")
 RANGES = json.loads((ROOT / "artifacts" / "sensitivity_ranges.json").read_text(encoding="utf-8"))
 
 
+@st.cache_resource(show_spinner="正在加载已训练模型…")
+def _cached_model(model_name: str = "lightgbm"):
+    return load_model(model_name)
+
+
+@st.cache_data(show_spinner=False)
+def _read_csv(path: str, modified_ns: int) -> pd.DataFrame:
+    return pd.read_csv(path)
+
+
+def _cached_csv(path: Path) -> pd.DataFrame:
+    return _read_csv(str(path), path.stat().st_mtime_ns)
+
+
 def header(title: str, caption: str) -> None:
     st.title(title)
     st.caption(caption)
 
 
+@st.cache_data(show_spinner=False)
 def _clean_source() -> pd.DataFrame:
-    data = pd.read_csv(ROOT / "data" / "al_data.csv")
+    data = _cached_csv(ROOT / "data" / "al_data.csv")
     if len(data.columns):
         first = str(data.columns[0])
         values = pd.to_numeric(data.iloc[:, 0], errors="coerce")
@@ -85,7 +101,7 @@ def _plot_style(ax: plt.Axes) -> None:
 
 def data_management() -> None:
     header("数据管理", "查看唯一数据源、字段单位和清洗后的输入口径")
-    data = pd.read_csv(ROOT / "data" / "al_data.csv")
+    data = _cached_csv(ROOT / "data" / "al_data.csv")
     if len(data.columns) and (str(data.columns[0]).startswith("Unnamed") or str(data.columns[0]) == ""):
         data = data.iloc[:, 1:].copy()
     with st.container(border=True):
@@ -130,7 +146,7 @@ def _show_image(name: str) -> None:
     if name == "05_shap_global.png":
         st.image(str(ROOT / "artifacts" / "figures" / name), width="stretch")
         return
-    predictions = pd.read_csv(ROOT / "artifacts" / "test_predictions.csv")
+    predictions = _cached_csv(ROOT / "artifacts" / "test_predictions.csv")
     figure, ax = plt.subplots(figsize=(9, 5.4), dpi=PLOT_DPI)
     if name == "01_actual_vs_pred.png":
         actual = predictions["actual_yield_strength_MPa"]
@@ -153,7 +169,7 @@ def _show_image(name: str) -> None:
         ax.set_xlabel("预测误差 (MPa)")
         ax.set_ylabel("样本数")
     elif name == "03_feature_importance.png":
-        details = pd.read_csv(ROOT / "feature_selection_details.csv").sort_values("gain").tail(20)
+        details = _cached_csv(ROOT / "feature_selection_details.csv").sort_values("gain").tail(20)
         ax.barh(details["feature"], details["gain"], color=MODEL_COLORS["LightGBM"])
         ax.set_title("LightGBM 特征重要性")
         ax.set_xlabel("训练集 gain（相对值）")
@@ -209,7 +225,7 @@ def _show_image(name: str) -> None:
         ax.set_ylabel("指标值（误差 MPa；R² 无量纲）")
         ax.legend()
     elif name == "09_threshold_sensitivity.png":
-        threshold = pd.read_csv(ROOT / "evidence" / "特征选择阈值敏感性.csv")
+        threshold = _cached_csv(ROOT / "evidence" / "特征选择阈值敏感性.csv")
         ax.plot(threshold["gain_retention_ratio"] * 100, threshold["MAE_MPa"], marker="o", color=PRIMARY, label="MAE (MPa)")
         ax.plot(threshold["gain_retention_ratio"] * 100, threshold["RMSE_MPa"], marker="s", color=PURPLE, label="RMSE (MPa)")
         ax.set_title("Gain 保留比例敏感性")
@@ -251,11 +267,11 @@ def model_evaluation() -> None:
     with tabs[2]:
         _show_image("08_stability.png")
         _show_image("09_threshold_sensitivity.png")
-        st.dataframe(pd.read_csv(ROOT / "evidence" / "特征选择阈值敏感性.csv"), width="stretch", hide_index=True)
+        st.dataframe(_cached_csv(ROOT / "evidence" / "特征选择阈值敏感性.csv"), width="stretch", hide_index=True)
 
 
 def _fill_example(prefix: str) -> None:
-    example = pd.read_csv(ROOT / "outputs" / "sample_input.csv").iloc[0]
+    example = _cached_csv(ROOT / "outputs" / "sample_input.csv").iloc[0]
     st.session_state[prefix + "_processing"] = str(example[CFG["processing_field"]])
     for name in CFG["numeric_features"]:
         st.session_state[prefix + "_" + name] = float(example[name])
@@ -295,7 +311,7 @@ def _render_sensitivity(values: dict[str, float], processing: str) -> None:
     points = st.slider("扫描点数", min_value=30, max_value=50, value=41)
     try:
         scan = build_compensated_scan(values, processing, element, interval["q05_percent"], interval["q95_percent"], points)
-        result = predict_dataframe(scan)
+        result = predict_dataframe(scan, model=_cached_model())
         totals = scan[CFG["numeric_features"]].sum(axis=1)
         if not np.allclose(totals.to_numpy(dtype=float), 100.0, atol=1e-9):
             st.error("补偿扫描成分合计校验失败")
@@ -342,7 +358,7 @@ def one_prediction() -> None:
     record = {**values, "Processing": processing}
     if submitted:
         try:
-            result = predict_record(record)
+            result = predict_record(record, model=_cached_model())
             st.session_state["single_prediction_last"] = {"record": record, "prediction": result["predicted_yield_strength_MPa"]}
             st.success(f"预测屈服强度：{result['predicted_yield_strength_MPa']:.2f} MPa")
             for warning in result.get("warnings", []):
@@ -366,8 +382,8 @@ def batch_prediction() -> None:
     upload = st.file_uploader("选择文件", type=["csv", "xlsx"])
     if upload:
         try:
-            data = pd.read_excel(upload) if upload.name.lower().endswith("xlsx") else pd.read_csv(upload)
-            result = predict_dataframe(data)
+            data = pd.read_excel(upload) if upload.name.lower().endswith(".xlsx") else pd.read_csv(upload)
+            result = predict_dataframe(data, model=_cached_model())
             for warning in result.attrs.get("input_warnings", []):
                 st.warning(warning)
             st.dataframe(result, width="stretch")
@@ -379,13 +395,13 @@ def batch_prediction() -> None:
 def explanations() -> None:
     header("模型解释", "全局贡献来自真实测试集 SHAP；局部解释显示单条输入的特征贡献")
     _show_image("05_shap_global.png")
-    st.dataframe(pd.read_csv(ROOT / "shap_summary.csv"), width="stretch", hide_index=True)
+    st.dataframe(_cached_csv(ROOT / "shap_summary.csv"), width="stretch", hide_index=True)
     _show_image("06_grouped_error.png")
     st.subheader("单条预测局部解释")
     processing, values, submitted = _numeric_form("local_explanation")
     if submitted:
         try:
-            explanation = explain_record({**values, "Processing": processing})
+            explanation = explain_record({**values, "Processing": processing}, model=_cached_model())
             st.metric("屈服强度预测", f"{explanation['prediction_MPa']:.2f} MPa")
             for warning in explanation.get("warnings", []):
                 st.warning(warning)

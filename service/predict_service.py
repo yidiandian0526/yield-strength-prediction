@@ -4,6 +4,7 @@ import json
 import sqlite3
 import uuid
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -91,6 +92,7 @@ def _feature_frame(record_or_df: dict[str, Any] | pd.DataFrame) -> pd.DataFrame:
     return matrix
 
 
+@lru_cache(maxsize=3)
 def _load_model(name: str = "lightgbm"):
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     key = name.lower().replace(" ", "_")
@@ -105,17 +107,21 @@ def _load_model(name: str = "lightgbm"):
     return joblib.load(model_path)
 
 
-def predict_dataframe(data: pd.DataFrame, model_name: str = "lightgbm") -> pd.DataFrame:
+def load_model(name: str = "lightgbm"):
+    return _load_model(name)
+
+
+def predict_dataframe(data: pd.DataFrame, model_name: str = "lightgbm", model=None) -> pd.DataFrame:
     features = _feature_frame(data)
-    model = _load_model(model_name)
+    model = model if model is not None else _load_model(model_name)
     result = data.copy()
     result["predicted_yield_strength_MPa"] = np.asarray(model.predict(features), dtype=float)
     result.attrs["input_warnings"] = features.attrs.get("input_warnings", [])
     return result
 
 
-def predict_record(record: dict[str, Any], model_name: str = "lightgbm", save: bool = True) -> dict[str, Any]:
-    result_df = predict_dataframe(pd.DataFrame([record]), model_name)
+def predict_record(record: dict[str, Any], model_name: str = "lightgbm", save: bool = True, model=None) -> dict[str, Any]:
+    result_df = predict_dataframe(pd.DataFrame([record]), model_name, model=model)
     prediction = float(result_df.iloc[0]["predicted_yield_strength_MPa"])
     result = {
         "id": str(uuid.uuid4()), "model": model_name,
@@ -129,11 +135,11 @@ def predict_record(record: dict[str, Any], model_name: str = "lightgbm", save: b
     return result
 
 
-def explain_record(record: dict[str, Any]) -> dict[str, Any]:
+def explain_record(record: dict[str, Any], model=None) -> dict[str, Any]:
     """Return per-feature TreeSHAP values for one prediction."""
     import shap
     features = _feature_frame(record)
-    model = _load_model("lightgbm")
+    model = model if model is not None else _load_model("lightgbm")
     values = shap.TreeExplainer(model).shap_values(features)
     if isinstance(values, list):
         values = values[0]
