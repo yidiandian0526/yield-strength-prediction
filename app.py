@@ -374,7 +374,10 @@ def one_prediction() -> None:
             else:
                 recipes.append(latest)
                 st.success(f"已加入对比（{len(recipes)}/3）")
-        _render_sensitivity(latest["record"], latest["record"]["Processing"])
+        # The saved record includes the categorical Processing field, while
+        # the scan builder expects only numeric composition values.
+        scan_values = {name: float(latest["record"][name]) for name in CFG["numeric_features"]}
+        _render_sensitivity(scan_values, latest["record"]["Processing"])
 
 
 def batch_prediction() -> None:
