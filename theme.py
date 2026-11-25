@@ -4,6 +4,7 @@ from pathlib import Path
 
 import matplotlib as mpl
 from matplotlib import font_manager
+from matplotlib.font_manager import FontProperties
 
 PRIMARY = "#E8A317"
 BACKGROUND = "#FFFDF7"
@@ -52,3 +53,27 @@ def configure_plot_font() -> str:
     mpl.rcParams["font.sans-serif"] = [selected, "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "DejaVu Sans"]
     mpl.rcParams["axes.unicode_minus"] = False
     return selected
+
+
+def cjk_fontproperties() -> FontProperties | None:
+    """FontProperties bound directly to the bundled font file.
+
+    Runtime-drawn charts (single-prediction sensitivity curve) cannot use
+    pre-rendered PNGs, so they still need a working CJK font at runtime.
+    The rcParams registration in configure_plot_font() proved unreliable
+    on Streamlit Cloud: on 2026-11-25 the About-page histogram and the
+    sensitivity curve still rendered as tofu boxes even though the font
+    file was present in the repo and the same code rendered correctly on
+    Linux with Matplotlib 3.11.2. Pointing FontProperties at the file
+    bypasses the font-manager registry lookup entirely. Returns None when
+    the file is absent so callers fall back to the default font.
+    """
+    if BUNDLED_FONT.exists():
+        try:
+            return FontProperties(fname=str(BUNDLED_FONT))
+        except (OSError, RuntimeError, ValueError):
+            return None
+    return None
+
+
+CJK_FONT = cjk_fontproperties()

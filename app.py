@@ -26,6 +26,7 @@ from service.comparison_service import comparison_csv, comparison_frame, compari
 from service.sensitivity_service import build_compensated_scan  # noqa: E402
 from theme import (  # noqa: E402
     BORDER,
+    CJK_FONT,
     MODEL_COLORS,
     PLOT_DPI,
     PLOT_GRID,
@@ -254,10 +255,10 @@ def _render_sensitivity(values: dict[str, float], processing: str) -> None:
         if current < low or current > high:
             ax.axvspan(min(current, low), max(current, low), color=SECONDARY_BACKGROUND, alpha=0.7, label="外推区，仅供参考")
             ax.axvline(current, color=WARNING, linestyle="--", linewidth=1.3)
-        ax.set_title(f"模型预测屈服强度随 {element} 变化（其余成分由 Al 补偿）")
-        ax.set_xlabel(f"{element} 成分 (%)")
-        ax.set_ylabel("预测屈服强度 (MPa)")
-        ax.legend()
+        ax.set_title(f"模型预测屈服强度随 {element} 变化（其余成分由 Al 补偿）", fontproperties=CJK_FONT)
+        ax.set_xlabel(f"{element} 成分 (%)", fontproperties=CJK_FONT)
+        ax.set_ylabel("预测屈服强度 (MPa)", fontproperties=CJK_FONT)
+        ax.legend(prop=CJK_FONT)
         _plot_style(ax)
         figure.tight_layout()
         st.pyplot(figure, width="stretch")
@@ -407,16 +408,9 @@ def about() -> None:
         st.dataframe(pd.DataFrame(METRICS["models"]).T, width="stretch")
         st.success("交付模型已训练完成，网页启动即可预测。")
     st.subheader("屈服强度分布")
-    cleaned = _clean_source()
-    figure, ax = plt.subplots(figsize=(8, 4.5), dpi=PLOT_DPI)
-    ax.hist(cleaned[CFG["target"]], bins=24, color=MODEL_COLORS["LightGBM"], edgecolor=TEXT, alpha=0.85)
-    ax.set_title("清洗后屈服强度分布")
-    ax.set_xlabel("屈服强度 (MPa)")
-    ax.set_ylabel("样本数")
-    _plot_style(ax)
-    figure.tight_layout()
-    st.pyplot(figure, width="stretch")
-    plt.close(figure)
+    # 直方图改用预渲染图：现场重画时 Cloud 上 rcParams 字体注册未生效，
+    # 2026-11-25 部署复验仍显示方框；预渲染图在 Linux 上用内置字体生成。
+    _show_image("10_target_distribution.png")
     st.subheader("数据来源与适用范围")
     st.markdown("数据集：Mendeley Data V1，作者 N. Bhat、A. S. Barnard、N. Birbilis；[DOI 10.17632/b6br4yk6r3.1](https://doi.org/10.17632/b6br4yk6r3.1)，许可 CC BY 4.0。")
     st.write("字段依据见配套文章 DOI 10.1016/j.commatsci.2023.112270；屈服强度定义参考 GB/T 228.1—2021，该标准不表示本数据集按其条件测试。")

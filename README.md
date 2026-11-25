@@ -63,7 +63,7 @@ python src/predict.py --input outputs/sample_input.csv
 - `metrics.json`、`feature_config.json`、`model_registry.json`：真实指标、输入配置、模型和参数注册。
 - `selection_report.csv`、`feature_selection_details.csv`：选择前后指标和训练集 gain 排序详情。
 - `artifacts/test_predictions.csv`、`shap_summary.csv`：留出测试预测与 SHAP 全局贡献。
-- `artifacts/figures/`：8 张正式训练分析图，含 5 种随机分组划分稳定性图；`09_threshold_sensitivity.png` 是独立附加实验图。网页直接展示这些已渲染好的图，不再现场重画（现场重画的三模型对比图曾把 MAE/RMSE 与 R² 画在同一根轴上，导致 R² 柱子看不见，2026-11-25 已改回直接展示）。
+- `artifacts/figures/`：8 张正式训练分析图，含 5 种随机分组划分稳定性图；`09_threshold_sensitivity.png` 是独立附加实验图；`10_target_distribution.png` 为关于页屈服强度分布直方图的预渲染图。网页直接展示这些已渲染好的图，不再现场重画（现场重画的三模型对比图曾把 MAE/RMSE 与 R² 画在同一根轴上，导致 R² 柱子看不见，2026-11-25 已改回直接展示；关于页直方图现场重画时 Cloud 上字体注册未生效仍显示方框，同日也改回直接展示）。单条预测页的敏感性曲线因依赖用户输入无法预渲染，改为用 FontProperties 直指内置字体文件绘制。
 - `artifacts/screenshots/`：当前保留 7 张网页截图，缺“配方对比”页；2026-11-25 部署版复查后，待字体修复重新部署后再补拍该页截图。
 - `artifacts/sensitivity_ranges.json`：按正式 seed 2024 训练划分计算的各元素 5%–95% 扫描区间。
 - `artifacts/showcase_tests.json`：补偿扫描、配方导出、外推标注和展示层一致性实测。
