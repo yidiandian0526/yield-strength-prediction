@@ -37,6 +37,13 @@ uvicorn api:app --host 127.0.0.1 --port 8000
 
 接口：`GET /health`、`POST /predict`、`POST /explain`、`GET /records`。网页、API 和直接 Python 调用共享 `service/predict_service.py` 与 `feature_config.json`。
 
+## 部署（Streamlit Community Cloud）
+
+已部署在 Streamlit Community Cloud（GitHub 仓库推送后自动重新部署）。部署地址见仓库说明。部署环境为 Linux，与本地 Windows 不同，需注意两点：
+
+- 图表中文字体：仓库自带 `assets/fonts/NotoSansSC-Regular.otf`（Noto Sans SC），`theme.py` 与 `src/train.py` 会优先注册该字体；不要删除该文件，否则部署版图表中文标题与坐标轴会显示为方框（2026-11-25 部署版复查发现的问题，已于同日修复）。
+- 预测记录不持久：部署环境的 `records.db` 是全新空库，且应用重启或重新部署后记录会丢失；演示前请先在页面上跑一两次预测，长期存档请导出 CSV。
+
 独立 CSV 预测（输入成分为 0–100 百分比，不做额外缩放；默认使用 LightGBM，输出文件默认为输入文件旁的 `<文件名>_predictions.csv`）：
 
 ```powershell
@@ -56,8 +63,8 @@ python src/predict.py --input outputs/sample_input.csv
 - `metrics.json`、`feature_config.json`、`model_registry.json`：真实指标、输入配置、模型和参数注册。
 - `selection_report.csv`、`feature_selection_details.csv`：选择前后指标和训练集 gain 排序详情。
 - `artifacts/test_predictions.csv`、`shap_summary.csv`：留出测试预测与 SHAP 全局贡献。
-- `artifacts/figures/`：8 张正式训练分析图，含 5 种随机分组划分稳定性图；`09_threshold_sensitivity.png` 是独立附加实验图。
-- `artifacts/screenshots/`：当前截图保留在目录中；正式八页截图待用户后续补充，本轮不验收截图。
+- `artifacts/figures/`：8 张正式训练分析图，含 5 种随机分组划分稳定性图；`09_threshold_sensitivity.png` 是独立附加实验图。网页直接展示这些已渲染好的图，不再现场重画（现场重画的三模型对比图曾把 MAE/RMSE 与 R² 画在同一根轴上，导致 R² 柱子看不见，2026-11-25 已改回直接展示）。
+- `artifacts/screenshots/`：当前保留 7 张网页截图，缺“配方对比”页；2026-11-25 部署版复查后，待字体修复重新部署后再补拍该页截图。
 - `artifacts/sensitivity_ranges.json`：按正式 seed 2024 训练划分计算的各元素 5%–95% 扫描区间。
 - `artifacts/showcase_tests.json`：补偿扫描、配方导出、外推标注和展示层一致性实测。
 - `artifacts/input_validation_tests.json`、`artifacts/prediction_unit_regression.json`：输入范围/工艺校验和网页、服务、API 单位一致性实测。
@@ -65,7 +72,8 @@ python src/predict.py --input outputs/sample_input.csv
 - `outputs/`：百分比单位输入样例、真实预测演示结果及记录导出样例；不导出本机既有预测记录。
 - `evidence/`：公平性审查、调参记录、稳定性数据、字段说明、测试记录、运行说明、参考文献与交接材料。
 - `environment_lock.txt`：由当前 `.venv` 导出的精确依赖版本。
-- `records.db`：SQLite 本地预测记录，网页/API 保存记录时使用。
+- `assets/fonts/NotoSansSC-Regular.otf`：仓库自带的 Noto Sans SC 中文字体，供部署版（Linux）图表渲染使用，勿删。
+- `records.db`：SQLite 本地预测记录，网页/API 保存记录时使用；部署环境上记录不持久，重启或重新部署后丢失。
 
 ## 页面功能
 

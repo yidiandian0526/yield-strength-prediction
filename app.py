@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from matplotlib.colors import LinearSegmentedColormap
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
@@ -143,103 +142,21 @@ def _model_metric_cards() -> None:
 
 
 def _show_image(name: str) -> None:
-    if name == "05_shap_global.png":
-        st.image(str(ROOT / "artifacts" / "figures" / name), width="stretch")
-        return
-    predictions = _cached_csv(ROOT / "artifacts" / "test_predictions.csv")
-    figure, ax = plt.subplots(figsize=(9, 5.4), dpi=PLOT_DPI)
-    if name == "01_actual_vs_pred.png":
-        actual = predictions["actual_yield_strength_MPa"]
-        predicted = predictions["LightGBM"]
-        ax.scatter(actual, predicted, color=MODEL_COLORS["LightGBM"], alpha=0.72, s=24)
-        low = float(min(actual.min(), predicted.min()))
-        high = float(max(actual.max(), predicted.max()))
-        ax.plot([low, high], [low, high], linestyle="--", color=TEXT, label="y = x")
-        primary = METRICS["models"]["LightGBM"]
-        ax.text(0.04, 0.96, f"MAE = {primary['MAE_MPa']:.2f} MPa\nR² = {primary['R2']:.4f}", transform=ax.transAxes, va="top", color=TEXT)
-        ax.set_title("真实值与预测值")
-        ax.set_xlabel("真实屈服强度 (MPa)")
-        ax.set_ylabel("预测屈服强度 (MPa)")
-        ax.legend()
-    elif name == "02_error_distribution.png":
-        errors = predictions["LightGBM"] - predictions["actual_yield_strength_MPa"]
-        ax.hist(errors, bins=24, color=MODEL_COLORS["LightGBM"], edgecolor=TEXT, alpha=0.85)
-        ax.axvline(0, linestyle="--", color=TEXT)
-        ax.set_title("预测误差分布")
-        ax.set_xlabel("预测误差 (MPa)")
-        ax.set_ylabel("样本数")
-    elif name == "03_feature_importance.png":
-        details = _cached_csv(ROOT / "feature_selection_details.csv").sort_values("gain").tail(20)
-        ax.barh(details["feature"], details["gain"], color=MODEL_COLORS["LightGBM"])
-        ax.set_title("LightGBM 特征重要性")
-        ax.set_xlabel("训练集 gain（相对值）")
-        ax.set_ylabel("输入特征")
-    elif name == "04_feature_selection_comparison.png":
-        comparison = pd.DataFrame(METRICS["selection_comparison"])
-        x = np.arange(len(comparison))
-        width = 0.24
-        series = [("MAE_MPa", "MAE (MPa)", PRIMARY), ("RMSE_MPa", "RMSE (MPa)", PURPLE), ("R2", "R²", TEAL)]
-        for index, (column, label, color) in enumerate(series):
-            ax.bar(x + (index - 1) * width, comparison[column], width, label=label, color=color)
-        ax.set_xticks(x, comparison["stage"])
-        ax.set_title("特征选择前后评价对比")
-        ax.set_xlabel("特征阶段")
-        ax.set_ylabel("指标值（误差 MPa；R² 无量纲）")
-        ax.legend()
-    elif name == "06_grouped_error.png":
-        grouped = predictions.assign(error=(predictions["LightGBM"] - predictions["actual_yield_strength_MPa"]).abs())
-        grouped = grouped.groupby("processing", as_index=False).agg(error=("error", "mean"), count=("error", "size"))
-        grouped = grouped.sort_values("error").tail(15)
-        cmap = LinearSegmentedColormap.from_list("semantic_yellow_purple", [PRIMARY, PURPLE])
-        colors = [cmap(value) for value in np.linspace(0, 1, len(grouped))]
-        ax.barh(grouped["processing"], grouped["error"], color=colors)
-        ax.set_title("按 Processing 分组的误差")
-        ax.set_xlabel("平均绝对误差 (MPa)")
-        ax.set_ylabel("Processing（处理状态）")
-    elif name == "07_model_comparison.png":
-        model_metrics = METRICS["models"]
-        model_names = list(model_metrics)
-        x = np.arange(len(model_names))
-        width = 0.24
-        for index, (column, label) in enumerate((("MAE_MPa", "MAE (MPa)"), ("RMSE_MPa", "RMSE (MPa)"), ("R2", "R²"))):
-            ax.bar(x + (index - 1) * width, [model_metrics[name][column] for name in model_names], width,
-                   label=label, color=[MODEL_COLORS[name] for name in model_names], alpha=(1.0 - index * 0.12))
-        ax.set_xticks(x, model_names)
-        ax.set_title("三模型测试集指标对比")
-        ax.set_xlabel("模型")
-        ax.set_ylabel("指标值（误差 MPa；R² 无量纲）")
-        ax.legend()
-    elif name == "08_stability.png":
-        stability = METRICS["stability"]
-        models = list(stability)
-        x = np.arange(len(models))
-        metrics = (("MAE_MPa", "MAE (MPa)"), ("RMSE_MPa", "RMSE (MPa)"), ("R2", "R²"))
-        for metric_index, (metric_name, metric_label) in enumerate(metrics):
-            values = [stability[model][metric_name]["mean"] for model in models]
-            deviations = [stability[model][metric_name]["std"] for model in models]
-            ax.errorbar(x + (metric_index - 1) * 0.12, values, yerr=deviations, fmt="o", capsize=4,
-                        color=[PRIMARY, PURPLE, TEAL][metric_index], label=metric_label)
-        ax.set_xticks(x, models)
-        ax.set_title("分组划分稳定性（均值 ± 标准差）")
-        ax.set_xlabel("模型")
-        ax.set_ylabel("指标值（误差 MPa；R² 无量纲）")
-        ax.legend()
-    elif name == "09_threshold_sensitivity.png":
-        threshold = _cached_csv(ROOT / "evidence" / "特征选择阈值敏感性.csv")
-        ax.plot(threshold["gain_retention_ratio"] * 100, threshold["MAE_MPa"], marker="o", color=PRIMARY, label="MAE (MPa)")
-        ax.plot(threshold["gain_retention_ratio"] * 100, threshold["RMSE_MPa"], marker="s", color=PURPLE, label="RMSE (MPa)")
-        ax.set_title("Gain 保留比例敏感性")
-        ax.set_xlabel("Gain 保留比例 (%)")
-        ax.set_ylabel("误差 (MPa)")
-        ax.legend()
+    """Display a pre-rendered training figure.
+
+    The PNGs under artifacts/figures/ were rendered during training with a
+    CJK font, so Chinese titles and axis labels display correctly on any
+    platform. They are the official figures listed in metrics.json. Do not
+    redraw them at runtime: the previous runtime redraw used a grouped-bar
+    layout for the model comparison that put MAE/RMSE (MPa) and R2
+    (dimensionless) on one shared axis, hiding the R2 bars, while the
+    pre-rendered 07_model_comparison.png uses three separate subplots.
+    """
+    path = ROOT / "artifacts" / "figures" / name
+    if path.exists():
+        st.image(str(path), width="stretch")
     else:
-        plt.close(figure)
-        st.error(f"未配置图表：{name}")
-        return
-    _plot_style(ax)
-    figure.tight_layout()
-    st.pyplot(figure, width="stretch")
-    plt.close(figure)
+        st.error(f"未找到图表文件：{name}")
 
 
 def model_evaluation() -> None:
@@ -506,7 +423,7 @@ def about() -> None:
     with st.expander("运行方式", expanded=False):
         st.code("streamlit run app.py\n\n# 重新训练（可选）\npython src/train.py\n\n# 可选本机 API\nuvicorn api:app --host 127.0.0.1 --port 8000", language="powershell")
     with st.expander("环境", expanded=False):
-        st.write("依赖记录在 requirements.txt；中文字体自动探测并回退。")
+        st.write("依赖记录在 requirements.txt；图表中文字体使用仓库自带的 Noto Sans SC（assets/fonts），Windows 本机字体作后备。")
 
 
 PAGES = {

@@ -21,8 +21,20 @@ MODEL_COLORS = {
 PLOT_GRID = BORDER
 PLOT_DPI = 180
 
+# Bundled CJK font. Streamlit Community Cloud runs on Linux, where the
+# Windows font paths below do not exist; without a bundled font, Matplotlib
+# falls back to DejaVu Sans (no CJK glyphs) and every Chinese chart title or
+# axis label renders as tofu boxes. Keep this file in the repo so charts
+# render correctly on any platform.
+BUNDLED_FONT = Path(__file__).resolve().parent / "assets" / "fonts" / "NotoSansSC-Regular.otf"
+
 
 def configure_plot_font() -> str:
+    if BUNDLED_FONT.exists():
+        try:
+            font_manager.fontManager.addfont(str(BUNDLED_FONT))
+        except (OSError, RuntimeError):
+            pass
     candidates = (
         Path("C:/Windows/Fonts/Noto Sans SC (TrueType).otf"),
         Path("C:/Windows/Fonts/msyh.ttc"),
