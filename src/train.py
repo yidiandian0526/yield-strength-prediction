@@ -92,6 +92,16 @@ def make_lgbm(params: dict[str, Any] | None = None, seed: int = SEED) -> LGBMReg
 
 
 def configure_plot_font() -> str:
+    # Bundled CJK font first: training may run on Linux (e.g. Streamlit
+    # Community Cloud or a CI runner) where the Windows paths below do not
+    # exist; without it Matplotlib falls back to DejaVu Sans and every
+    # Chinese chart title/label renders as tofu boxes.
+    bundled_font = PROJECT_ROOT / "assets" / "fonts" / "NotoSansSC-Regular.otf"
+    if bundled_font.exists():
+        try:
+            font_manager.fontManager.addfont(str(bundled_font))
+        except (OSError, RuntimeError):
+            pass
     font_paths = (
         Path("C:/Windows/Fonts/Noto Sans SC (TrueType).otf"),
         Path("C:/Windows/Fonts/msyh.ttc"),
